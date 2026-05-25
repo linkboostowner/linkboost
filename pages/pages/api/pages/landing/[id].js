@@ -8,23 +8,32 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id && typeof window !== 'undefined') {
-      setLoading(true);
-      fetch(`/api/product?id=${id}`)
-        .then(r => r.json())
-        .then(data => {
-          if (data.error) {
-            setProduct(null);
-          } else {
-            setProduct(data);
-          }
-        })
-        .catch(() => setProduct(null))
-        .finally(() => setLoading(false));
-    }
+    if (!id) return;
+    setLoading(true);
+    // Напрямую запрашиваем данные с Wildberries (браузер -> WB API)
+    fetch(`https://card.wb.ru/cards/v1/detail?appType=1&curr=rub&dest=-1257786&spp=30&nm=${id}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.data?.products?.length) {
+          const p = data.data.products[0];
+          setProduct({
+            name: p.name,
+            price: p.salePriceU / 100,
+            images: p.pics.map(
+              pic => `https://images.wbstatic.net/c516x688/new/${String(pic).padStart(6, '0')}.jpg`
+            ),
+            rating: p.rating,
+            feedbacks: p.feedbacks,
+          });
+        } else {
+          setProduct(null);
+        }
+      })
+      .catch(() => setProduct(null))
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (typeof window === 'undefined') return null;
+  // Пока не загрузились данные — показываем заглушку
   if (loading) return <div>Загрузка...</div>;
   if (!product) return <div>Товар не найден или ошибка</div>;
 
