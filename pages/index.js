@@ -12,7 +12,7 @@ export default function Home() {
       return;
     }
     const id = extractProductId(url);
-    if (id) router.push(`/landing/${id}`);
+    if (id) router.push(`/landing?id=${id}`);
     else alert('Не удалось распознать товар');
   };
 
