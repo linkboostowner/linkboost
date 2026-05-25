@@ -8,28 +8,25 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Выполняем запрос только на клиенте и только если есть id
     if (id && typeof window !== 'undefined') {
       setLoading(true);
       fetch(`/api/product?id=${id}`)
         .then(r => r.json())
         .then(data => {
           if (data.error) {
-            console.error(data.error);
             setProduct(null);
           } else {
             setProduct(data);
           }
         })
-        .catch(err => console.error('Ошибка загрузки:', err))
+        .catch(() => setProduct(null))
         .finally(() => setLoading(false));
     }
   }, [id]);
 
-  // Не рендерим ничего на сервере (пока идёт сборка)
   if (typeof window === 'undefined') return null;
   if (loading) return <div>Загрузка...</div>;
-  if (!product) return <div>Товар не найден или произошла ошибка</div>;
+  if (!product) return <div>Товар не найден или ошибка</div>;
 
   const buyUrl = `https://www.wildberries.ru/catalog/${id}/detail.aspx`;
 
