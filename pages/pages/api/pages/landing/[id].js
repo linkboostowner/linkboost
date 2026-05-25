@@ -32,7 +32,6 @@ export default function LandingPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Всегда показываем состояние на сервере и клиенте, пока не загрузится
   if (loading) return <div>Загрузка...</div>;
   if (!product) return <div>Товар не найден или ошибка</div>;
 
