@@ -1,7 +1,9 @@
 export default async function handler(req, res) {
-  // Защита от вызова без query-параметров (например, при статической генерации)
   if (!req.query || !req.query.id) {
-    return res.status(400).json({ error: 'Missing product id' });
+    res.statusCode = 400;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Missing product id' }));
+    return;
   }
 
   const { id } = req.query;
@@ -13,7 +15,10 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!data?.data?.products?.length) {
-      return res.status(404).json({ error: 'Товар не найден' });
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: 'Товар не найден' }));
+      return;
     }
 
     const product = data.data.products[0];
@@ -27,8 +32,12 @@ export default async function handler(req, res) {
       feedbacks: product.feedbacks,
     };
 
-    res.json(result);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
   } catch (error) {
-    res.status(500).json({ error: 'Ошибка при получении данных' });
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Ошибка при получении данных' }));
   }
 }
