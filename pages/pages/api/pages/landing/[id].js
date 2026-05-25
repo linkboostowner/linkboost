@@ -10,7 +10,6 @@ export default function LandingPage() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    // Напрямую запрашиваем данные с Wildberries (браузер -> WB API)
     fetch(`https://card.wb.ru/cards/v1/detail?appType=1&curr=rub&dest=-1257786&spp=30&nm=${id}`)
       .then(r => r.json())
       .then(data => {
@@ -33,7 +32,7 @@ export default function LandingPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Пока не загрузились данные — показываем заглушку
+  // Всегда показываем состояние на сервере и клиенте, пока не загрузится
   if (loading) return <div>Загрузка...</div>;
   if (!product) return <div>Товар не найден или ошибка</div>;
 
